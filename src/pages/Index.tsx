@@ -6,6 +6,7 @@ import { useMaintenanceTasks } from '@/hooks/use-maintenance-tasks';
 import { TaskCard } from '@/components/TaskCard';
 import { AddTaskDialog } from '@/components/AddTaskDialog';
 import { StatsCards } from '@/components/StatsCards';
+import { RemindersBar } from '@/components/RemindersBar';
 import { CATEGORIES, type MaintenanceCategory } from '@/lib/types';
 import { getTaskStatus, getNextDueDate } from '@/lib/maintenance-utils';
 import { Button } from '@/components/ui/button';
@@ -51,6 +52,9 @@ const Index = () => {
       <main className="container max-w-4xl mx-auto px-4 py-6 space-y-6">
         {/* Stats */}
         <StatsCards tasks={tasks} />
+
+        {/* Reminders */}
+        <RemindersBar tasks={tasks} />
 
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
