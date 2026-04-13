@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Home, Filter } from 'lucide-react';
+import { Home, Filter, LogOut } from 'lucide-react';
 import { useMaintenanceTasks } from '@/hooks/use-maintenance-tasks';
+import { useAuth } from '@/contexts/AuthContext';
 
 import { TaskCard } from '@/components/TaskCard';
 import { AddTaskDialog } from '@/components/AddTaskDialog';
@@ -15,7 +16,8 @@ import type { TaskStatus } from '@/lib/types';
 type FilterType = 'all' | TaskStatus;
 
 const Index = () => {
-  const { tasks, addTask, updateTask, markCompleted, deleteTask } = useMaintenanceTasks();
+  const { tasks, loading, addTask, updateTask, markCompleted, deleteTask } = useMaintenanceTasks();
+  const { user, signOut } = useAuth();
   const [filter, setFilter] = useState<FilterType>('all');
   const [categoryFilter, setCategoryFilter] = useState<MaintenanceCategory | 'all'>('all');
 
