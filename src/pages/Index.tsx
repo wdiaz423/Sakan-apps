@@ -53,6 +53,9 @@ const Index = () => {
         {/* Stats */}
         <StatsCards tasks={tasks} />
 
+        {/* Reminders */}
+        <RemindersBar tasks={tasks} />
+
         {/* Filters */}
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
           <div className="flex gap-1.5 flex-wrap">
