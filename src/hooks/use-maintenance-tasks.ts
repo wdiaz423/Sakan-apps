@@ -3,7 +3,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import type { MaintenanceTask, CompletionRecord } from '@/lib/types';
 
-export function useMaintenanceTasks() {
+export function useMaintenanceTasks(homeId?: string | null) {
   const { user } = useAuth();
   const [tasks, setTasks] = useState<MaintenanceTask[]>([]);
   const [loading, setLoading] = useState(true);
@@ -12,14 +12,16 @@ export function useMaintenanceTasks() {
     if (!user) { setTasks([]); setLoading(false); return; }
     setLoading(true);
 
-    const { data: dbTasks, error } = await supabase
-      .from('maintenance_tasks')
-      .select('*')
-      .order('created_at', { ascending: false });
+    let query = supabase.from('maintenance_tasks').select('*').order('created_at', { ascending: false });
+    
+    if (homeId) {
+      query = query.eq('home_id', homeId);
+    }
+
+    const { data: dbTasks, error } = await query;
 
     if (error) { console.error(error); setLoading(false); return; }
 
-    // Fetch history for all tasks
     const taskIds = (dbTasks || []).map(t => t.id);
     const { data: history } = taskIds.length > 0
       ? await supabase.from('completion_history').select('*').in('task_id', taskIds).order('completed_at', { ascending: false })
@@ -42,11 +44,12 @@ export function useMaintenanceTasks() {
       lastCompleted: t.last_completed,
       completionHistory: historyMap.get(t.id) || [],
       notes: t.notes || undefined,
+      homeId: t.home_id || undefined,
     }));
 
     setTasks(mapped);
     setLoading(false);
-  }, [user]);
+  }, [user, homeId]);
 
   useEffect(() => { fetchTasks(); }, [fetchTasks]);
 
@@ -61,6 +64,7 @@ export function useMaintenanceTasks() {
       frequency_unit: task.frequencyUnit,
       last_completed: task.lastCompleted,
       notes: task.notes || null,
+      home_id: task.homeId || homeId || null,
     });
     if (!error) fetchTasks();
   };
@@ -86,7 +90,6 @@ export function useMaintenanceTasks() {
   const markCompleted = async (id: string, notes?: string) => {
     if (!user) return;
     const now = new Date().toISOString();
-
     await supabase.from('maintenance_tasks').update({ last_completed: now }).eq('id', id);
     await supabase.from('completion_history').insert({
       task_id: id,
