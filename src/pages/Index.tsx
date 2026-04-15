@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Filter, LogOut, Bell, BellRing, Plus, Sparkles } from 'lucide-react';
+import { Filter, LogOut, Bell, BellRing, Plus, Sparkles, BarChart3, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useMaintenanceTasks } from '@/hooks/use-maintenance-tasks';
 import { useHomes } from '@/hooks/use-homes';
 import { useAuth } from '@/contexts/AuthContext';
@@ -20,6 +21,7 @@ import type { TaskStatus } from '@/lib/types';
 type FilterType = 'all' | TaskStatus;
 
 const Index = () => {
+  const navigate = useNavigate();
   const { homes, selectedHomeId, selectHome, addHome, updateHome, deleteHome, loading: homesLoading } = useHomes();
   const { tasks, loading, addTask, updateTask, markCompleted, deleteTask } = useMaintenanceTasks(selectedHomeId);
   const { user, signOut } = useAuth();
@@ -81,6 +83,24 @@ const Index = () => {
             />
           </div>
           <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/dashboard')}
+              title="Dashboard"
+              className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground"
+            >
+              <BarChart3 className="h-4 w-4 icon-bounce" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/settings')}
+              title="Configuración"
+              className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground"
+            >
+              <Settings className="h-4 w-4 icon-spin-hover" />
+            </Button>
             <Button
               variant="ghost"
               size="icon"
