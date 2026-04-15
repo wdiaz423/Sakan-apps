@@ -13,6 +13,7 @@ import { AddTaskDialog } from '@/components/AddTaskDialog';
 import { StatsCards } from '@/components/StatsCards';
 import { RemindersBar } from '@/components/RemindersBar';
 import { HomeSelector } from '@/components/HomeSelector';
+import { HomeMembersDialog } from '@/components/HomeMembersDialog';
 import { CATEGORIES, type MaintenanceCategory } from '@/lib/types';
 import { getTaskStatus, getNextDueDate } from '@/lib/maintenance-utils';
 import { Button } from '@/components/ui/button';
