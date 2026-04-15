@@ -125,7 +125,6 @@ export function useHomeMembers(homeId: string | null) {
 
   const acceptInvitation = async (inviteCode: string) => {
     if (!user) return false;
-    // Find invitation
     const { data: inv } = await supabase
       .from('home_invitations')
       .select('*')
@@ -134,22 +133,9 @@ export function useHomeMembers(homeId: string | null) {
       .single();
 
     if (!inv) return false;
-
-    // Check expiry
     if (new Date(inv.expires_at) < new Date()) return false;
 
-    // Add as member - use RPC or direct insert
-    const { error: memberError } = await supabase.rpc('accept_home_invitation', {
-      _invite_code: inviteCode,
-      _user_id: user.id,
-    });
-
-    // Fallback: if RPC doesn't exist, we'll handle it differently
-    if (memberError) {
-      console.error('Error accepting invitation:', memberError);
-      return false;
-    }
-
+    // This is handled in JoinHome page directly
     return true;
   };
 
