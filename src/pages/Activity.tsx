@@ -144,10 +144,27 @@ export default function Activity() {
         </div>
       </header>
 
-      <main className="container max-w-3xl mx-auto px-4 py-6">
+      <main className="container max-w-3xl mx-auto px-4 py-6 space-y-6">
+        <div className="flex gap-1.5 flex-wrap items-center">
+          {TIME_FILTERS.map(f => (
+            <Button
+              key={f.value}
+              variant={timeFilter === f.value ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setTimeFilter(f.value)}
+              className={`text-xs rounded-lg ${timeFilter === f.value ? 'shadow-md shadow-primary/30' : ''}`}
+            >
+              {f.label}
+            </Button>
+          ))}
+          <span className="ml-auto text-xs text-muted-foreground">
+            {filteredItems.length} {filteredItems.length === 1 ? 'registro' : 'registros'}
+          </span>
+        </div>
+
         {loading ? (
           <p className="text-center text-muted-foreground py-20">Cargando actividad...</p>
-        ) : items.length === 0 ? (
+        ) : filteredItems.length === 0 ? (
           <div className="text-center py-20 space-y-3">
             <div className="mx-auto h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
               <ActivityIcon className="h-8 w-8 text-primary" />
