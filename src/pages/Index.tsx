@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Filter, LogOut, Bell, BellRing, Plus, Sparkles, BarChart3, Settings } from 'lucide-react';
+import { Filter, LogOut, Bell, BellRing, Plus, Sparkles, BarChart3, Settings, Activity as ActivityIcon } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useMaintenanceTasks } from '@/hooks/use-maintenance-tasks';
 import { useHomes } from '@/hooks/use-homes';
@@ -93,6 +93,15 @@ const Index = () => {
               className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground"
             >
               <BarChart3 className="h-4 w-4 icon-bounce" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => navigate('/activity')}
+              title="Actividad del hogar"
+              className="h-9 w-9 rounded-lg text-muted-foreground hover:text-foreground"
+            >
+              <ActivityIcon className="h-4 w-4 icon-bounce" />
             </Button>
             <Button
               variant="ghost"
