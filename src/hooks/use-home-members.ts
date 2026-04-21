@@ -11,6 +11,8 @@ export interface HomeMember {
   role: HomeRole;
   displayName?: string;
   email?: string;
+  avatarUrl?: string | null;
+  joinedAt?: string;
 }
 
 export interface HomeInvitation {
@@ -39,26 +41,31 @@ export function useHomeMembers(homeId: string | null) {
     const { data: membersData } = await supabase
       .from('home_members')
       .select('*')
-      .eq('home_id', homeId);
+      .eq('home_id', homeId)
+      .order('created_at', { ascending: true });
 
     const membersList: HomeMember[] = (membersData || []).map(m => ({
       id: m.id,
       homeId: m.home_id,
       userId: m.user_id,
       role: m.role as HomeRole,
+      joinedAt: m.created_at,
     }));
 
-    // Fetch profiles for display names
+    // Fetch profiles for display names + avatars
     const userIds = membersList.map(m => m.userId);
     if (userIds.length > 0) {
       const { data: profiles } = await supabase
         .from('profiles')
-        .select('user_id, display_name')
+        .select('user_id, display_name, avatar_url')
         .in('user_id', userIds);
       
       profiles?.forEach(p => {
         const member = membersList.find(m => m.userId === p.user_id);
-        if (member) member.displayName = p.display_name || undefined;
+        if (member) {
+          member.displayName = p.display_name || undefined;
+          member.avatarUrl = p.avatar_url || null;
+        }
       });
     }
 
@@ -123,6 +130,20 @@ export function useHomeMembers(homeId: string | null) {
     fetchMembers();
   };
 
+  const transferOwnership = async (newOwnerMemberId: string) => {
+    if (!user) return false;
+    const me = members.find(m => m.userId === user.id);
+    const target = members.find(m => m.id === newOwnerMemberId);
+    if (!me || me.role !== 'owner' || !target) return false;
+    // Promote target to owner; demote myself to admin
+    const { error: e1 } = await supabase.from('home_members').update({ role: 'owner' }).eq('id', target.id);
+    if (e1) return false;
+    const { error: e2 } = await supabase.from('home_members').update({ role: 'admin' }).eq('id', me.id);
+    if (e2) return false;
+    await fetchMembers();
+    return true;
+  };
+
   const acceptInvitation = async (inviteCode: string) => {
     if (!user) return false;
     const { data: inv } = await supabase
@@ -148,6 +169,7 @@ export function useHomeMembers(homeId: string | null) {
     cancelInvitation,
     updateMemberRole,
     removeMember,
+    transferOwnership,
     acceptInvitation,
     refresh: fetchMembers,
   };
