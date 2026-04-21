@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Mail, Lock, User } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -127,7 +128,14 @@ const AuthPage = () => {
             </div>
           </div>
           <div>
-            <Label htmlFor="password">Contraseña</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Contraseña</Label>
+              {isLogin && (
+                <Link to="/forgot-password" className="text-xs text-primary hover:underline underline-offset-4">
+                  ¿Olvidaste tu contraseña?
+                </Link>
+              )}
+            </div>
             <div className="relative mt-1">
               <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input id="password" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="••••••••" className="pl-9 h-11 rounded-xl border-border/50" required minLength={6} />
